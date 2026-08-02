@@ -1,6 +1,9 @@
 import os
 import sys
-import random
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+GAME_NAME = "My Game"
 
 TILE_SIZE = 32
 SCALE = 2
