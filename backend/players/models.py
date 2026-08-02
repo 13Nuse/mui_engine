@@ -72,6 +72,10 @@ class CharacterStats:
         self.base_accuracy += 0.01
         self.base_resistance += 0.01
 
+    def reset_stats_on_level_up(self) -> None:
+        self.base_health = self.max_health
+        self.base_mana = self.max_mana
+
     def first_strike(self, target) -> bool: # who attacks first, the one with the higher speed stat will attack first
         return self.base_speed > target.base_speed
 
@@ -141,6 +145,33 @@ class CharacterStats:
 
     def is_alive(self) -> bool:
         return self.base_health > 0
+
+    def get_stats(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "level": self.level,
+            "experience": self.experience,
+            "experience_to_next_level": self.experience_to_next_level,
+            "base_health": self.base_health,
+            "max_health": self.max_health,
+            "base_mana": self.base_mana,
+            "max_mana": self.max_mana,
+            "base_attack": self.base_attack,
+            "base_magic_attack": self.base_magic_attack,
+            "base_magic_defense": self.base_magic_defense,
+            "base_defense": self.base_defense,
+            "base_speed": self.base_speed,
+            "base_critical_chance": self.base_critical_chance,
+            "base_critical_damage": self.base_critical_damage,
+            "base_health_regeneration": self.base_health_regeneration,
+            "base_mana_regeneration": self.base_mana_regeneration,
+            "base_luck": self.base_luck,
+            "base_dodge_chance": self.base_dodge_chance,
+            "base_block_chance": self.base_block_chance,
+            "base_accuracy": self.base_accuracy,
+            "base_resistance": self.base_resistance
+        }
 
     def __str__(self) -> str:
         return f"CharacterStats(id={self.id}, 
