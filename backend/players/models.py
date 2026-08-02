@@ -25,7 +25,9 @@ class CharacterStats:
     experience_to_next_level: int
 
     base_health: int
+    max_health: int
     base_mana: int
+    max_mana: int
     base_attack: int
     base_magic_attack: int
     base_magic_defense: int
@@ -70,10 +72,48 @@ class CharacterStats:
         self.base_accuracy += 0.01
         self.base_resistance += 0.01
 
+    def first_strike(self, target) -> bool: # who attacks first, the one with the higher speed stat will attack first
+        return self.base_speed > target.base_speed
+
+    def attack(self, target) -> int:
+        if self.attack_hit_or_miss(target):
+            damage = self.calculate_damage(target)
+            damage = self.critical_hit(damage)
+            if target.dodge_attack(damage):
+                return 0  # Attack was dodged
+            damage = target.block_attack(damage)
+            actual_damage = target.take_damage(damage)
+            return actual_damage
+        else:
+            return 0  # Attack missed
+
     def attack_hit_or_miss(self, target) -> bool:
         hit_chance = self.base_accuracy - target.base_dodge_chance
         return hit_chance >= 0.5  # Assuming a hit chance of 50% or more results in a hit, will build something better later
 
+    def calculate_damage(self, target) -> int:
+        damage = self.base_attack - target.base_defense
+        return max(0, damage)  # Ensure damage is not negative
+
+    def critical_hit(self, damage: int) -> int:
+        if self.base_critical_chance >= 0.5:  # Assuming a critical chance of 50% or more results in a critical hit, will build something better later
+            return int(damage * self.base_critical_damage)
+        return damage
+
+    def dodge_attack(self, damage: int) -> bool:
+        dodge_chance = self.base_dodge_chance
+        return dodge_chance >= 0.5  # Assuming a dodge chance of 50% or more results in a dodge, will build something better later
+
+    def counter_attack(self, target) -> bool:
+        counter_chance = target.base_speed - self.base_speed
+        return counter_chance >= 0.5  # Assuming a counter chance of 50% or more results in a counter attack, will build something better later
+    
+    def block_attack(self, damage: int) -> int:
+        block_chance = self.base_block_chance
+        if block_chance >= 0.5:  # Assuming a block chance of 50% or more results in a block, will build something better later
+            return int(damage * (1 - self.base_defense / 100))  # Assuming defense reduces damage by a percentage, will build something better later
+        return damage
+  
     def take_damage(self, damage: int) -> int:
         actual_damage = max(0, damage - self.base_defense)
         self.base_health -= actual_damage
@@ -81,6 +121,26 @@ class CharacterStats:
             self.base_health = 0
         return actual_damage
 
+    def heal(self, amount: int) -> None:
+        self.base_health = min(self.max_health, self.base_health + amount)
+
+    def regenerate_health(self) -> None:
+        self.base_health = min(self.max_health, self.base_health + self.base_health_regeneration)
+
+    def use_mana(self, amount: int) -> bool:
+        if self.base_mana >= amount:
+            self.base_mana -= amount
+            return True
+        return False
+
+    def restore_mana(self, amount: int) -> None:
+        self.base_mana = min(self.max_mana, self.base_mana + amount)
+
+    def regenerate_mana(self) -> None:
+        self.base_mana = min(self.max_mana, self.base_mana + self.base_mana_regeneration)
+
+    def is_alive(self) -> bool:
+        return self.base_health > 0
 
     def __str__(self) -> str:
         return f"CharacterStats(id={self.id}, 
@@ -98,6 +158,7 @@ class CharacterStats:
         base_luck={self.base_luck}, base_dodge_chance={self.base_dodge_chance}, 
         base_block_chance={self.base_block_chance}, base_accuracy={self.base_accuracy}, 
         base_resistance={self.base_resistance})"
+
 
 
 @dataclass
