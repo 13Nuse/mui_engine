@@ -1,12 +1,22 @@
 import os
 import sys
+from pathlib import Path
+import pygame
 from dataclasses import dataclass
 
+# system config
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-GAME_ICON = "" # need to create and set 'pygame.image.load("")
-GAME_NAME = "My Game"
+
+# game config
+GAME_ICON = pygame.Surface((16, 16)) # need to create and set 'pygame.image.load("")
+GAME_ICON.fill((255, 255, 255)) # delete once actual image is applied
+
+GAME_NAME = "My Game Engine"
 
 TILE_SIZE = 32
 SCALE = 2
@@ -22,3 +32,79 @@ PLAYER_SPEED = 5
 ENEMY_SPEED = 3
 MAX_INVENTORY_SIZE = 20
 
+
+# basic colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (128, 128, 128)
+LIGHT_GRAY = (200, 200, 200)
+DARK_GRAY = (64, 64, 64)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+CYAN = (0, 255, 255)
+MAGENTA = (255, 0, 255)
+ORANGE = (255, 165, 0)
+PURPLE = (128, 0, 128)
+PINK = (255, 192, 203)
+BROWN = (165, 42, 42)
+BEIGE = (245, 245, 220)
+NAVY = (0, 0, 128)
+TEAL = (0, 128, 128)
+OLIVE = (128, 128, 0)
+MAROON = (128, 0, 0)
+GOLD = (218, 165, 32)
+SILVER = (192, 192, 192)
+LIME = (0, 255, 0)
+AQUA = (0, 255, 255)
+TURQUOISE = (64, 224, 208)
+INDIGO = (75, 0, 130)
+VIOLET = (238, 130, 238)
+CRIMSON = (220, 20, 60)
+SALMON = (250, 128, 114)
+TOMATO = (255, 99, 71)
+CORAL = (255, 127, 80)
+GOLDENROD = (218, 165, 32)
+DARKRED = (139, 0, 0)
+DARKGREEN = (0, 100, 0)
+DARKBLUE = (0, 0, 139)
+DARKCYAN = (0, 139, 139)
+DARKMAGENTA = (139, 0, 139)
+DARKORANGE = (255, 140, 0)
+DARKVIOLET = (148, 0, 211)
+DARKOLIVE = (85, 107, 47)
+DARKTEAL = (0, 128, 128)
+DARKPURPLE = (48, 25, 52)
+LIGHTPINK = (255, 182, 193)
+LIGHTBLUE = (173, 216, 230)
+LIGHTGREEN = (144, 238, 144)
+LIGHTYELLOW = (255, 255, 224)
+LIGHTCYAN = (224, 255, 255)
+LIGHTMAGENTA = (255, 182, 193)
+LIGHTORANGE = (255, 215, 0)
+LIGHTPURPLE = (216, 191, 216)
+LIGHTRED = (255, 99, 71)
+DEEPSKYBLUE = (0, 191, 255)
+SKYBLUE = (135, 206, 235)
+DODGERBLUE = (30, 144, 255)
+ROYALBLUE = (65, 105, 225)
+SLATEBLUE = (106, 90, 205)
+MEDIUMBLUE = (0, 0, 205)
+STEELBLUE = (70, 130, 180)
+CADETBLUE = (95, 158, 160)
+SEAGREEN = (46, 139, 87)
+MEDIUMSEAGREEN = (60, 179, 113)
+SPRINGGREEN = (0, 255, 127)
+MINTCREAM = (245, 255, 250)
+HONEYDEW = (240, 255, 240)
+ALICEBLUE = (240, 248, 255)
+AZURE = (240, 255, 255)
+IVORY = (255, 255, 240)
+LINEN = (250, 240, 230)
+WHEAT = (245, 222, 179)
+SANDYBROWN = (244, 164, 96)
+CHOCOLATE = (210, 105, 30)
+SIENNA = (160, 82, 45)
+PERU = (205, 133, 63)
+TAN = (210, 180, 140)
