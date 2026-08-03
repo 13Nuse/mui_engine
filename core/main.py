@@ -9,6 +9,7 @@ import settings
 class Game:
     pygame.init()
     screen = pygame.display.set_mode((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
+    pygame.display.set_icon(settings.GAME_ICON) # will set an icon once made
     pygame.display.set_caption(settings.GAME_NAME)
     clock = pygame.time.Clock()
     running = True
@@ -37,6 +38,9 @@ class Game:
     def new_game(self):
         # Reset game state for a new game
         pass  # Implement new game logic here
+
+    def game_intro(self):
+        pass
 
     def quit(self):
         pygame.quit()
