@@ -1,0 +1,72 @@
+[
+  {
+    "item_id": "potion",
+    "name": "Potion",
+    "description": "Restores 50 HP.",
+    "item_type": "CONSUMABLE",
+    "rarity": "COMMON",
+    "buy_price": 25,
+    "sell_price": 10,
+    "restores_hp": 50,
+    "icon_key": "potion"
+  },
+  {
+    "item_id": "hi_potion",
+    "name": "Hi-Potion",
+    "description": "Restores 150 HP.",
+    "item_type": "CONSUMABLE",
+    "rarity": "UNCOMMON",
+    "buy_price": 75,
+    "sell_price": 30,
+    "restores_hp": 150,
+    "icon_key": "hi_potion"
+  },
+  {
+    "item_id": "ether",
+    "name": "Ether",
+    "description": "Restores 30 MP.",
+    "item_type": "CONSUMABLE",
+    "rarity": "UNCOMMON",
+    "buy_price": 90,
+    "sell_price": 35,
+    "restores_mp": 30,
+    "icon_key": "ether"
+  },
+  {
+    "item_id": "iron_sword",
+    "name": "Iron Sword",
+    "description": "A dependable blade. +8 Attack.",
+    "item_type": "WEAPON",
+    "rarity": "COMMON",
+    "equip_slot": "WEAPON",
+    "buy_price": 150,
+    "sell_price": 60,
+    "stackable": false,
+    "stat_modifiers": { "attack": 8 },
+    "icon_key": "iron_sword"
+  },
+  {
+    "item_id": "leather_armor",
+    "name": "Leather Armor",
+    "description": "Light protection. +5 Defense.",
+    "item_type": "ARMOR",
+    "rarity": "COMMON",
+    "equip_slot": "BODY",
+    "buy_price": 120,
+    "sell_price": 45,
+    "stackable": false,
+    "stat_modifiers": { "defence": 5 },
+    "icon_key": "leather_armor"
+  },
+  {
+    "item_id": "town_key",
+    "name": "Old Town Key",
+    "description": "Opens the sealed gate in the village square.",
+    "item_type": "KEY_ITEM",
+    "rarity": "RARE",
+    "buy_price": 0,
+    "sell_price": 0,
+    "stackable": false,
+    "icon_key": "town_key"
+  }
+]
