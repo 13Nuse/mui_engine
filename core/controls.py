@@ -5,32 +5,8 @@ core/controls.py
 import pygame
 from __future__ import annotations
 from dataclasses import dataclass, field
-from enum import Enum, auto
 
-from core.settings import GameState
-
-
-class ControlAction(Enum):
-    # continuous / held - checks every frame via get_held_actions function
-    MOVE_UP = auto()
-    MOVE_DOWN = auto()
-    MOVE_LEFT = auto()
-    MOVE_RIGHT = auto()
-
-    # discrete - checks once per KEWDOWN via get_event_actions function
-    CONFIRM = auto()
-    CANCEL = auto()
-    INTERACT = auto()
-    MENU = auto()
-    PAUSE = auto()
-
-    # battle only discrete actions
-    ATTACK1 = auto()
-    ATTACK2 = auto()
-    ATTACK3 = auto()
-    ATTACK4 = auto()
-    CYCLE_TARGET_LEFT = auto()
-    CYCLE_TARGET_RIGHT = auto()
+from core.settings import GameState, ControlAction
 
 # keys checked continuously via pygame.key.get_pressed() - movement only.
 _HELD_BINDINGS: dict[GameState, dict[int, ControlAction]] = {
@@ -119,3 +95,52 @@ class Controls:
     event_bindings: dict[GameState, dict[int, ControlAction]] = field(
         default_factory=lambda: _EVENT_BINDINGS
     )
+   
+    def get_held_actions(self, game_state: GameState) -> set[ControlAction]:
+        """Continuous input - movement. Call once per frame."""
+        bindings = self.held_bindings.get(game_state, {})
+        if not bindings:
+            return set()
+
+        pressed = pygame.key.get_pressed()
+        return {action for key, action in bindings.items() if pressed[key]}
+
+    def get_event_actions(self, events: list[pygame.event.Event], game_state: GameState) -> list[ControlAction]:
+        """
+        Discrete input -- confirm, cancel, menu toggles, battle commands.
+        Call once per frame with the events list from pygame.event.get().
+        Returned in the order the keys were pressed so a frame with two
+        keydowns doesn't silently drop one.
+        """
+        bindings = self.event_bindings.get(game_state, {})
+        if not bindings:
+            return []
+
+        actions: list[ControlAction] = []
+        for event in events:
+            if event.type == pygame.KEYDOWN and event.key in bindings:
+                actions.append(bindings[event.key])
+        return actions
+
+    def movement_vector(self, game_state: GameState) -> pygame.Vector2:
+        """
+        Convenience helper for the world: turns held movement Actions
+        into a normalized direction vector so diagonal movement isn't
+        faster than cardinal movement.
+        """
+        held = self.get_held_actions(game_state)
+        vector = pygame.Vector2(0, 0)
+
+        if ControlAction.MOVE_UP in held:
+            vector.y -= 1
+        if ControlAction.MOVE_DOWN in held:
+            vector.y += 1
+        if ControlAction.MOVE_LEFT in held:
+            vector.x -= 1
+        if ControlAction.MOVE_RIGHT in held:
+            vector.x += 1
+
+        if vector.length_squared() > 0:
+            vector = vector.normalize()
+
+        return vector
