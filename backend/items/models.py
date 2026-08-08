@@ -5,25 +5,8 @@ backend/items/models.py
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum, auto
 from typing import Optional
-
-
-class ItemType(Enum):
-    CONSUMABLE = auto()
-    WEAPON = auto()
-    ARMOR = auto()
-    ACCESSORY = auto()
-    KEY_ITEM = auto()
-    MATERIAL = auto()
-
-
-class ItemRarity(Enum):
-    COMMON = auto()
-    UNCOMMON = auto()
-    RARE = auto ()
-    EPIC = auto()
-    lEGENDARY = auto()
+from core.settings import ItemType, ItemRarity, EquipSlot
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,3 +26,42 @@ class StatModifiers:
     hp: int = 0
     hp: int = 0
     hp: int = 0
+
+@dataclass(frozen=True, slots=True)
+class Item:
+    """
+    A read-only definition of an item. Two players carrying "Potion"
+    both reference conceptually the same Item; only the quantity differs,
+    which is tracked separately in an InventorySlot.
+    """
+
+    item_id: str
+    name: str
+    description: str
+    item_type: ItemType
+    rarity: ItemRarity = ItemRarity.COMMON
+    equip_slot: EquipSlot = EquipSlot.NONE
+
+    buy_price: int = 0
+    sell_price: int = 0
+    stackable: bool = True
+    max_stack: int = 99
+
+    stat_modifiers: StatModifiers = field(default_factory=StatModifiers)
+
+    # consumable-specific
+    restores_hp: int = 0
+    restores_mp: int = 0
+    cures_status: tuple[str, ...] = field(default_factory=tuple)
+
+    # sprite lookup key - frontend resolves this to an actual surface
+    icon_key: Optional[str] = None
+
+    def is_usable_in_field(self) -> bool:
+        return self.item_type == ItemType.CONSUMABLE
+
+    def is_usable_in_battle(self) -> bool:
+        return self.item_type in (ItemType.CONSUMABLE,) # will add more into the list when created
+
+    def is_equippable(self) -> bool:
+        return self.equip_slot != EquipSlot.NONE
