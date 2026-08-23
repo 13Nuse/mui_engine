@@ -2,16 +2,17 @@
 core/settings.py
 
 All constants live here.
-
 """
 
-import sys
 from __future__ import annotations
+import sys
+import pygame # remove this later once i move the loading game icon in game config
 from pathlib import Path
 from dataclasses import dataclass
 from enum import Enum, auto
 
-# system config
+
+# system directory config
 BASE_DIR = Path(__file__).resolve().parent.parent  # project root
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
@@ -27,32 +28,43 @@ GAME_ICON_PATH = FRONTEND_DATA_DIR / "icon.png"
 
 
 # game config
-GAME_ICON = pygame.Surface((16, 16)) # need to create and set 'pygame.image.load("")
-GAME_ICON.fill((255, 255, 255)) # delete once actual image is applied
+class GameConfig:
+    GAME_ICON = pygame.Surface((16, 16)) # need to create and set 'pygame.image.load("")
+    GAME_ICON.fill((255, 255, 255)) # delete once actual image is applied
+    GAME_NAME = "My Game Engine"
 
-GAME_NAME = "My Game Engine"
 
 # Window config
-TILE_SIZE = 32
-SCALE = 2
-SCREEN_TILE_X = 20
-SCREEN_TILE_Y = 15
-SCREEN_WIDTH = SCREEN_TILE_X * TILE_SIZE
-SCREEN_HEIGHT = SCREEN_TILE_Y * TILE_SIZE
-WINDOW_WIDTH = SCREEN_WIDTH * SCALE
-WINDOW_HEIGHT = SCREEN_HEIGHT * SCALE
+class WindowConfig:
+    TILE_SIZE = 32
+    SCALE = 2
+    SCREEN_TILE_X = 35
+    SCREEN_TILE_Y = 21
+    SCREEN_WIDTH = SCREEN_TILE_X * TILE_SIZE
+    SCREEN_HEIGHT = SCREEN_TILE_Y * TILE_SIZE
+    WINDOW_WIDTH = SCREEN_WIDTH * SCALE
+    WINDOW_HEIGHT = SCREEN_HEIGHT * SCALE
+
+
+# Game loop speed
 FPS = 60
 
+
 # Player config
-PLAYER_SPEED = 5
-ENEMY_SPEED = 3
-MAX_INVENTORY_SIZE = 20
-MAX_INVENTORY_STACK = 99
+class PlayerConfig:
+    PLAYER_SPRITE_HEIGHT: int = 48
+    PLAYER_SPRITE_WIDTH: int = 32
+    ANIMATION_FPS: int = 8
+    PLAYER_SPEED: int = 5
+    ENEMY_SPEED: int = 3
+    MAX_INVENTORY_SIZE: int = 20
+    MAX_INVENTORY_STACK: int = 99
+    HITBOX_SIZE = (20, 12)
 
 
 class Direction(Enum):
     """
-    str + Enum so a Direction compares equal to a plain string too
+    compare Enum to a plain string
     (Direction.DOWN == "down" is True).
     """
     DOWN = "down"
@@ -60,8 +72,14 @@ class Direction(Enum):
     RIGHT = "right"
     UP = "up"
 
+ROW_DIRECTION_ORDER: list[Direction] = [
+    Direction.DOWN,
+    Direction.LEFT,
+    Direction.RIGHT,
+    Direction.UP,
+]
 
-# Game state - controls and main use this to determine which input mapping to use
+# Game states, controls and main.py will use this to determine which input mapping to use
 class GameState(Enum):
     MAIN_MENU = auto()
     WORLD = auto()
@@ -111,7 +129,7 @@ class ItemRarity(Enum):
     UNCOMMON = auto()
     RARE = auto ()
     EPIC = auto()
-    lEGENDARY = auto()
+    LEGENDARY = auto()
 
 
 class EquipSlot(Enum):
@@ -120,6 +138,25 @@ class EquipSlot(Enum):
     BODY = auto()
     ACCESSORY = auto()
     NONE = auto()
+    
+
+class ConsumableEffect(Enum):
+    HEAL_HP = auto()
+    RESTORE_MP = auto()
+    REVIVE = auto()
+    CURE_STATUS = auto()
+    # BUFF_STAT intentionally omitted -- temporary in-battle stat buffs need a
+    # duration/expiry concept that doesn't exist on Combatant yet. Add it
+    # alongside status_effects once that system is fleshed out.
+
+
+class TargetScope(Enum):
+    SELF = auto()
+    SINGLE_ALLY = auto()
+    ALL_ALLIES = auto()
+    SINGLE_ENEMY = auto()
+    ALL_ENEMIES = auto()
+
 
 # Battle system
 MAX_PARTY_SIZE = 4
@@ -130,84 +167,86 @@ ATB_TICK_RATE = 10.0
 
 
 # basic colors (RGB/ RGBA)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (128, 128, 128)
-LIGHT_GRAY = (200, 200, 200)
-DARK_GRAY = (64, 64, 64)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-CYAN = (0, 255, 255)
-MAGENTA = (255, 0, 255)
-ORANGE = (255, 165, 0)
-PURPLE = (128, 0, 128)
-PINK = (255, 192, 203)
-BROWN = (165, 42, 42)
-BEIGE = (245, 245, 220)
-NAVY = (0, 0, 128)
-TEAL = (0, 128, 128)
-OLIVE = (128, 128, 0)
-MAROON = (128, 0, 0)
-GOLD = (218, 165, 32)
-SILVER = (192, 192, 192)
-LIME = (0, 255, 0)
-AQUA = (0, 255, 255)
-TURQUOISE = (64, 224, 208)
-INDIGO = (75, 0, 130)
-VIOLET = (238, 130, 238)
-CRIMSON = (220, 20, 60)
-SALMON = (250, 128, 114)
-TOMATO = (255, 99, 71)
-CORAL = (255, 127, 80)
-GOLDENROD = (218, 165, 32)
-DARKRED = (139, 0, 0)
-DARKGREEN = (0, 100, 0)
-DARKBLUE = (0, 0, 139)
-DARKCYAN = (0, 139, 139)
-DARKMAGENTA = (139, 0, 139)
-DARKORANGE = (255, 140, 0)
-DARKVIOLET = (148, 0, 211)
-DARKOLIVE = (85, 107, 47)
-DARKTEAL = (0, 128, 128)
-DARKPURPLE = (48, 25, 52)
-LIGHTPINK = (255, 182, 193)
-LIGHTBLUE = (173, 216, 230)
-LIGHTGREEN = (144, 238, 144)
-LIGHTYELLOW = (255, 255, 224)
-LIGHTCYAN = (224, 255, 255)
-LIGHTMAGENTA = (255, 182, 193)
-LIGHTORANGE = (255, 215, 0)
-LIGHTPURPLE = (216, 191, 216)
-LIGHTRED = (255, 99, 71)
-DEEPSKYBLUE = (0, 191, 255)
-SKYBLUE = (135, 206, 235)
-DODGERBLUE = (30, 144, 255)
-ROYALBLUE = (65, 105, 225)
-SLATEBLUE = (106, 90, 205)
-MEDIUMBLUE = (0, 0, 205)
-STEELBLUE = (70, 130, 180)
-CADETBLUE = (95, 158, 160)
-SEAGREEN = (46, 139, 87)
-MEDIUMSEAGREEN = (60, 179, 113)
-SPRINGGREEN = (0, 255, 127)
-MINTCREAM = (245, 255, 250)
-HONEYDEW = (240, 255, 240)
-ALICEBLUE = (240, 248, 255)
-AZURE = (240, 255, 255)
-IVORY = (255, 255, 240)
-LINEN = (250, 240, 230)
-WHEAT = (245, 222, 179)
-SANDYBROWN = (244, 164, 96)
-CHOCOLATE = (210, 105, 30)
-SIENNA = (160, 82, 45)
-PERU = (205, 133, 63)
-TAN = (210, 180, 140)
-UI_BACKGROUND = (20, 20, 30, 200)   # semi-transparent UI panels
-HP_BAR = (200, 30, 30)
-MP_BAR = (40, 100, 200)
-ATB_BAR = (230, 200, 40)
+class Color:
+    DARKBLUEGREY = (18, 33, 51)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    GRAY = (128, 128, 128)
+    LIGHT_GRAY = (200, 200, 200)
+    DARK_GRAY = (64, 64, 64)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    YELLOW = (255, 255, 0)
+    CYAN = (0, 255, 255)
+    MAGENTA = (255, 0, 255)
+    ORANGE = (255, 165, 0)
+    PURPLE = (128, 0, 128)
+    PINK = (255, 192, 203)
+    BROWN = (165, 42, 42)
+    BEIGE = (245, 245, 220)
+    NAVY = (0, 0, 128)
+    TEAL = (0, 128, 128)
+    OLIVE = (128, 128, 0)
+    MAROON = (128, 0, 0)
+    GOLD = (218, 165, 32)
+    SILVER = (192, 192, 192)
+    LIME = (0, 255, 0)
+    AQUA = (0, 255, 255)
+    TURQUOISE = (64, 224, 208)
+    INDIGO = (75, 0, 130)
+    VIOLET = (238, 130, 238)
+    CRIMSON = (220, 20, 60)
+    SALMON = (250, 128, 114)
+    TOMATO = (255, 99, 71)
+    CORAL = (255, 127, 80)
+    GOLDENROD = (218, 165, 32)
+    DARKRED = (139, 0, 0)
+    DARKGREEN = (0, 100, 0)
+    DARKBLUE = (0, 0, 139)
+    DARKCYAN = (0, 139, 139)
+    DARKMAGENTA = (139, 0, 139)
+    DARKORANGE = (255, 140, 0)
+    DARKVIOLET = (148, 0, 211)
+    DARKOLIVE = (85, 107, 47)
+    DARKTEAL = (0, 128, 128)
+    DARKPURPLE = (48, 25, 52)
+    LIGHTPINK = (255, 182, 193)
+    LIGHTBLUE = (173, 216, 230)
+    LIGHTGREEN = (144, 238, 144)
+    LIGHTYELLOW = (255, 255, 224)
+    LIGHTCYAN = (224, 255, 255)
+    LIGHTMAGENTA = (255, 182, 193)
+    LIGHTORANGE = (255, 215, 0)
+    LIGHTPURPLE = (216, 191, 216)
+    LIGHTRED = (255, 99, 71)
+    DEEPSKYBLUE = (0, 191, 255)
+    SKYBLUE = (135, 206, 235)
+    DODGERBLUE = (30, 144, 255)
+    ROYALBLUE = (65, 105, 225)
+    SLATEBLUE = (106, 90, 205)
+    MEDIUMBLUE = (0, 0, 205)
+    STEELBLUE = (70, 130, 180)
+    CADETBLUE = (95, 158, 160)
+    SEAGREEN = (46, 139, 87)
+    MEDIUMSEAGREEN = (60, 179, 113)
+    SPRINGGREEN = (0, 255, 127)
+    MINTCREAM = (245, 255, 250)
+    HONEYDEW = (240, 255, 240)
+    ALICEBLUE = (240, 248, 255)
+    AZURE = (240, 255, 255)
+    IVORY = (255, 255, 240)
+    LINEN = (250, 240, 230)
+    WHEAT = (245, 222, 179)
+    SANDYBROWN = (244, 164, 96)
+    CHOCOLATE = (210, 105, 30)
+    SIENNA = (160, 82, 45)
+    PERU = (205, 133, 63)
+    TAN = (210, 180, 140)
+    UI_BACKGROUND = (20, 20, 30, 200)   # semi-transparent UI panels
+    HP_BAR = (200, 30, 30)
+    MP_BAR = (40, 100, 200)
+    ATB_BAR = (230, 200, 40)
 
 # font presets
 FONT_FAMILY_DEFAULT = "arial"
@@ -233,3 +272,8 @@ FONT_BUTTON_STYLE = {"bold": True}
 FONT_SMALL_STYLE = {}
 FONT_LABEL_STYLE = {}
 FONT_TOOLTIP_STYLE = {}
+
+FONT_MAIN = None  # e.g. FONT_DIR / "PixelFont.ttf"
+FONT_SIZE_SMALL = 14
+FONT_SIZE_MEDIUM = 20
+FONT_SIZE_LARGE = 32
