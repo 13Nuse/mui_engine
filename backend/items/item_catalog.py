@@ -43,6 +43,7 @@ def _load_stat_modifiers(data: dict[str, Any]) -> StatModifiers:
         magic_defence=data.get("magic_defence", 0),
         speed=data.get("speed", 0),
         resistance=data.get("resistance", 0),
+        hp_regen=data.get("hp_regen", 0),
     )
 
 
