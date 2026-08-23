@@ -1,9 +1,9 @@
 """
 core/controls.py
 """
+from __future__ import annotations
 
 import pygame
-from __future__ import annotations
 from dataclasses import dataclass, field
 
 from core.settings import GameState, ControlAction
@@ -75,6 +75,9 @@ _EVENT_BINDINGS: dict[GameState, dict[int, ControlAction]] = {
     GameState.PAUSED: {
         pygame.K_ESCAPE: ControlAction.CANCEL,
         pygame.K_z: ControlAction.CONFIRM,
+        pygame.K_RETURN: ControlAction.CONFIRM,
+        pygame.K_UP: ControlAction.MOVE_UP,
+        pygame.K_DOWN: ControlAction.MOVE_DOWN,
     },
 }
 
